@@ -78,10 +78,10 @@ async function call(method, params) {
 const auth = async (endUserIp) =>
   await call("auth", {
     endUserIp,
-    //personalNumber:"",
-   /* requirement: {
+    personalNumber:"193305074795",
+    requirement: {
       allowFingerprint: true,
-    },*/
+    },
   });
 const collect = async (orderRef) => await call("collect", { orderRef });
 
