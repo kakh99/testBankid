@@ -109,7 +109,7 @@ app.get("/api/login", function (req, res, next) {
   auth("212.162.171.111")
     .then((response) => {
       const { orderRef, autoStartToken } = response;
-      const redirectUrl = `bankid///?autostarttoken=[${autoStartToken}]&redirect=null`;
+      const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
       console.log(redirectUrl);
       res.redirect(redirectUrl);
       //startPolling(orderRef);
