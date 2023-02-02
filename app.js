@@ -106,7 +106,7 @@ const startPolling = async (orderRef) => {
 
 app.get("/api/login", function (req, res, next) {
   console.log(req.socket.remoteAddress);
-  auth(req.socket.remoteAddress)
+  auth('91.128.217.193')
     .then((response) => {
       const { orderRef, autoStartToken } = response;
       const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
