@@ -24,7 +24,7 @@ const axios = axiosLib.create({
     rejectUnauthorized: false,
     pfx: config.pfx,
     passphrase: config.passphrase,
-    cert: config.ca,
+    cert: config.cert,
   }),
   headers: {
     "Content-Type": "application/json",
@@ -90,6 +90,7 @@ const startPolling = async (orderRef) => {
 
 
 app.get("/api/login", function (req, res, next) {
+  console.log(req.socket.remoteAddress);
   auth(req.socket.remoteAddress)
     .then((response) => {
       const { orderRef, autoStartToken } = response;
