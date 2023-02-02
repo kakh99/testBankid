@@ -112,7 +112,7 @@ app.get("/api/login", function (req, res, next) {
       const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
       console.log(redirectUrl);
       res.redirect(redirectUrl);
-      //startPolling(orderRef);
+      startPolling(orderRef);
     })
     .catch((err) => next(err));
 });
