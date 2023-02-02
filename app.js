@@ -91,7 +91,7 @@ app.get("/api/login", function (req, res, next) {
   auth(req.socket.remoteAddress)
     .then((response) => {
       const { orderRef, autoStartToken } = response;
-      const redirectUrl = `https://app.bankid.com/?autostarttoken=[${autoStartToken}]&redirect=null`;
+      const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
       res.redirect(redirectUrl);
       startPolling(orderRef);
     })
