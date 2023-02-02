@@ -1,0 +1,23 @@
+{
+  "name": "bankidtest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon ./app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "await-to-js": "^3.0.0",
+    "axios": "^1.2.3",
+    "bankid": "^3.1.1",
+    "body-parser": "^1.15.2",
+    "cross-env": "^7.0.3",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.6.0",
+    "express": "^4.12.4",
+    "mongoose": "^5.11.15",
+    "morgan": "^1.10.0"
+  }
+}
