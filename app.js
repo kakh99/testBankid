@@ -6,6 +6,7 @@ const path = require("path");
 const axiosLib = require("axios");
 const https = require("https");
 const to = require("await-to-js").to;
+const fetch=require("isomorphic-fetch");
 // Create Express app
 const app = express();
 //app.use(express.json());
@@ -15,7 +16,7 @@ const config = {
   bankdIdUrl: "https://appapi2.test.bankid.com/rp/v5.1",
   pfx: fs.readFileSync("./certificate/FPTestcert4_20220818.p12"),
   passphrase: "qwerty123",
-  ca: fs.readFileSync(`./certificate/cert.cer`),
+  ca: fs.readFileSync(`./certificate/cert.cer`)
 };
 
 // Agent for using SSL client certificate
@@ -36,6 +37,20 @@ async function call(method, params) {
   const [error, result] = await to(
     axios.post(`${config.bankdIdUrl}/${method}`, params)
   );
+  /*const [error, result] = await to (fetch(`${config.bankdIdUrl}/${method}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(params),
+    agent: new https.Agent({
+      rejectUnauthorized: false,
+      pfx: config.pfx,
+      passphrase: config.passphrase,
+      ca: config.ca,
+    }),
+  }));
+*/
 
   if (error) {
     console.log(error.stack);
@@ -64,9 +79,9 @@ const auth = async (endUserIp) =>
   await call("auth", {
     endUserIp,
     //personalNumber:"",
-    requirement: {
+   /* requirement: {
       allowFingerprint: true,
-    },
+    },*/
   });
 const collect = async (orderRef) => await call("collect", { orderRef });
 
@@ -91,7 +106,7 @@ const startPolling = async (orderRef) => {
 
 app.get("/api/login", function (req, res, next) {
   console.log(req.socket.remoteAddress);
-  auth(req.socket.remoteAddress)
+  auth("212.162.171.111")
     .then((response) => {
       const { orderRef, autoStartToken } = response;
       const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
