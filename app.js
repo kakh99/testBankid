@@ -12,7 +12,7 @@ const app = express();
 
 const config = {
   mobileBankIdPolicy: "1.2.3.4.25",
-  bankdIdUrl: "https://appapi2.test.bankid.com/rp/v5",
+  bankdIdUrl: "https://appapi2.test.bankid.com/rp/v5.1",
   pfx: fs.readFileSync("./certificate/FPTestcert4_20220818.p12"),
   passphrase: "qwerty123",
   ca: fs.readFileSync(`./certificate/cert.cer`),
@@ -86,6 +86,7 @@ const startPolling = async (orderRef) => {
     return err;
   }
 };
+
 
 app.get("/api/login", function (req, res, next) {
   auth(req.socket.remoteAddress)
