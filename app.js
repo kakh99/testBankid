@@ -15,7 +15,7 @@ const config = {
   bankdIdUrl: "https://appapi2.test.bankid.com/rp/v5.1",
   pfx: fs.readFileSync("./certificate/FPTestcert4_20220818.p12"),
   passphrase: "qwerty123",
-  cert: fs.readFileSync(`./certificate/cert.cer`),
+  ca: fs.readFileSync(`./certificate/cert.cer`),
 };
 
 // Agent for using SSL client certificate
@@ -24,7 +24,7 @@ const axios = axiosLib.create({
     rejectUnauthorized: false,
     pfx: config.pfx,
     passphrase: config.passphrase,
-    cert: config.cert,
+    ca: config.ca,
   }),
   headers: {
     "Content-Type": "application/json",
