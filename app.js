@@ -33,6 +33,8 @@ const axios = axiosLib.create({
 });
 
 async function call(method, params) {
+  console.log(":");
+  console.log(params);
  console.log(`${config.bankdIdUrl}/${method}`) ;
   const [error, result] = await to(
     axios.post(`${config.bankdIdUrl}/${method}`, params)
@@ -77,8 +79,8 @@ async function call(method, params) {
 
 const auth = async (endUserIp) =>
   await call("auth", {
-    endUserIp:endUserIp,
-   // personalNumber:"193305074795",
+    endUserIp,
+    personalNumber:"193305074795",
     requirement: {
       allowFingerprint: true,
     },
