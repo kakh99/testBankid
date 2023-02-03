@@ -5,7 +5,6 @@ const express = require("express");
 const axiosLib = require("axios");
 const https = require("https");
 const to = require("await-to-js").to;
-const fetch=require("isomorphic-fetch");
 const dotenv = require('dotenv');
 
 dotenv.config({path: './config.env'});
