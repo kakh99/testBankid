@@ -1,12 +1,15 @@
 //const BankId = require("bankid");
 const fs = require("fs");
 const express = require("express");
-const morgan = require("morgan");
-const path = require("path");
+
 const axiosLib = require("axios");
 const https = require("https");
 const to = require("await-to-js").to;
 const fetch=require("isomorphic-fetch");
+const dotenv = require('dotenv');
+
+dotenv.config({path: './config.env'});
+const mongoose = require('mongoose')
 // Create Express app
 const app = express();
 //app.use(express.json());
@@ -112,6 +115,7 @@ app.get("/api/login", function (req, res, next) {
     .then((response) => {
       const { orderRef, autoStartToken } = response;
       const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
+      console.log("redirectUrl:");
       console.log(redirectUrl);
       res.redirect(redirectUrl);
       startPolling(orderRef);
@@ -133,6 +137,19 @@ app.use((err, _req, res, next) => {
   }
   res.status(err.status || 500);
   res.json(errRes);
+});
+
+const mongoURI = process.env.MONGO_URI.replace(
+  '<PASSWORD>',
+  process.env.MONGO_URI_PASSWORD
+);
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+  if (err) {
+      console.error(`Failed to connect to MongoDB with URI: ${mongoURI}`);
+      console.error(err.stack);
+      process.exit(1);
+  }
+  console.log(`Connected to MongoDB with URI: ${mongoURI}`);
 });
 
 const port = process.env.PORT || 8000; //add port to the env file for the server
