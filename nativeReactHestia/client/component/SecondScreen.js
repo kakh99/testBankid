@@ -7,7 +7,7 @@ import React, {useEffect, useState} from 'react'
 export default function SecondScreen({ navigation }) {
   const localBackgroundImage = require('../assets//Background_app_login[654].png')
   const requestOptions = {
-    method: 'POST',
+    method: 'GET',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ postName: 'React updates ' })
 };
@@ -15,7 +15,7 @@ export default function SecondScreen({ navigation }) {
 const postExample = async () => {
     try {
         await fetch(
-            'https://reqres.in/api/posts', requestOptions)
+            'https://bankidtest1.onrender.com/api/login')
             .then(response => {
                 response.json()
                     .then(data => {
