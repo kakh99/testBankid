@@ -7,7 +7,7 @@ export default function SecondScreen({ navigation }) {
     const postExample = async () => {
     try {
         await fetch(
-            'http://127.0.0.1:8000/api/login', requestOptions)
+            'https://reqres.in/api/posts', requestOptions)
             .then(response => {
                 response.json()
                     .then(data => {
