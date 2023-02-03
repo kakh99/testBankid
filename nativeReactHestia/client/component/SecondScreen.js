@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { View, Text, Image, TextInput, ImageBackground,   ScrollView,TouchableOpacity, Alert} from 'react-native';
 import { StyleSheet} from 'react-native';
 import { StackActions } from '@react-navigation/native';
+import React, {useEffect, useState} from 'react'
 
 export default function SecondScreen({ navigation }) {
   const localBackgroundImage = require('../assets//Background_app_login[654].png')
@@ -28,6 +29,15 @@ const postExample = async () => {
         console.error(error);
     }
 }
+const [backendData, setBackendData] = useState([])
+const [loading, setloading] = useState(true)
+  useEffect(()=>{
+  fetch("https://api.github.com/users/hadley/orgs")
+  .then((res)=>res.json())
+  .then((json)=>setBackendData(json))
+  .catch((error)=>console.log(error))
+  .finally(()=>setloading(false))
+},[])
   
   return (
     < ImageBackground source={localBackgroundImage}  style={styles.coverimage}>
@@ -41,8 +51,19 @@ const postExample = async () => {
         <Text style={styles.btnText}>Skapa In Ny Rapport</Text>
        </TouchableOpacity>
       
-      
+            
       <StatusBar style="auto" />
+    </View>
+    <View>
+    {loading ? (<Text>loading...</Text>):(
+      backendData.map((data)=>(
+        <View>
+          <Text>{data.id}</Text>
+          <Text>{data.login}</Text>
+        </View>
+      ))
+      
+    )}
     </View>
     </ ImageBackground>
   );
