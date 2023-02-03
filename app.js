@@ -35,9 +35,8 @@ const axios = axiosLib.create({
 });
 
 async function call(method, params) {
-  console.log(":");
-  console.log(params);
- console.log(`${config.bankdIdUrl}/${method}`) ;
+ // console.log("params:");console.log(params);
+ //console.log(`${config.bankdIdUrl}/${method}`) ;
   const [error, result] = await to(
     axios.post(`${config.bankdIdUrl}/${method}`, params)
   );
@@ -60,7 +59,10 @@ async function call(method, params) {
     }
     return { error };
   }
+
+  console.log("result.data:");
   console.log(result.data);
+  console.log("end of result.data:");
   // axiosLib(`https://app.bankid.com/?autostarttoken=[${result.data.autoStartToken}]&redirect=null`,param);
 
   return result.data;
@@ -104,7 +106,7 @@ app.get("/api/login", function (req, res, next) {
       console.log("redirectUrl:");
       console.log(redirectUrl);
       res.redirect(redirectUrl);
-      startPolling(orderRef);
+      startPolling(orderRef)
     })
     .catch((err) => next(err));
 });

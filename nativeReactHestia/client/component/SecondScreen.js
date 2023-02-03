@@ -2,11 +2,12 @@ import { StatusBar } from 'expo-status-bar';
 import { View, Text, Image, TextInput, ImageBackground,   ScrollView,TouchableOpacity, Alert} from 'react-native';
 import { StyleSheet} from 'react-native';
 import { StackActions } from '@react-navigation/native';
+import React, {useEffect, useState} from 'react'
 
 export default function SecondScreen({ navigation }) {
   const localBackgroundImage = require('../assets//Background_app_login[654].png')
   const requestOptions = {
-    method: 'GET',
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ postName: 'React updates ' })
 };
@@ -14,7 +15,7 @@ export default function SecondScreen({ navigation }) {
 const postExample = async () => {
     try {
         await fetch(
-            'https://bankidtest1.onrender.com/api/login')
+            'https://reqres.in/api/posts', requestOptions)
             .then(response => {
                 response.json()
                     .then(data => {
@@ -28,6 +29,15 @@ const postExample = async () => {
         console.error(error);
     }
 }
+const [backendData, setBackendData] = useState([])
+const [loading, setloading] = useState(true)
+  useEffect(()=>{
+  fetch("http://212.162.171.111:8000/api/login")
+  .then((res)=>res.json())
+  .then((json)=>setBackendData(json))
+  .catch((error)=>console.log(error))
+  .finally(()=>setloading(false))
+},[])
   
   return (
     < ImageBackground source={localBackgroundImage}  style={styles.coverimage}>
@@ -41,8 +51,20 @@ const postExample = async () => {
         <Text style={styles.btnText}>Skapa In Ny Rapport</Text>
        </TouchableOpacity>
       
-      
+            
       <StatusBar style="auto" />
+    </View>
+    <View>
+    {loading ? (<Text>loading...</Text>):(
+      backendData.map((data)=>(
+        <View>
+          <Text>{data.orderRef}</Text>
+          <Text>{data.status}</Text>
+          <Text>{data.data.hintCode}</Text>
+        </View>
+      ))
+      
+    )}
     </View>
     </ ImageBackground>
   );
