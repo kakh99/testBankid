@@ -41,20 +41,7 @@ async function call(method, params) {
   const [error, result] = await to(
     axios.post(`${config.bankdIdUrl}/${method}`, params)
   );
-  /*const [error, result] = await to (fetch(`${config.bankdIdUrl}/${method}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(params),
-    agent: new https.Agent({
-      rejectUnauthorized: false,
-      pfx: config.pfx,
-      passphrase: config.passphrase,
-      ca: config.ca,
-    }),
-  }));
-*/
+
 
   if (error) {
     console.log(error.stack);
