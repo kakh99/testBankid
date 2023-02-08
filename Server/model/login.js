@@ -1,0 +1,9 @@
+/*
+
+personalNumber 
+firstName
+symptom
+adress
+
+
+*/

@@ -64,11 +64,13 @@ const [loading, setloading] = useState(true)
   .finally(()=>setloading(false))
    
 },[])
+
 const [backendData1, setBackendData1] = useState([])
 const fetchApi = async ()=>{
   try {
     console.log('hello1')
     //http://172.18.2.231:8000/api/login'
+    //https://bankidtest1.onrender.com/api/login
     const res = await axios.get('https://bankidtest1.onrender.com/api/login')
     console.log('hello2')
     console.log(res.data)

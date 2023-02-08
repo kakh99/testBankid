@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="patient.css" />
+    <title>Hesta Agora patient page</title>
+  </head>
+  <body>
+    <div class="topLogo">
+      <img src="images/logo.png" alt="hestia agora logo" />
+    </div>
+    <div class="tillB">
+      <h4>Till Biståndshandläggare</h4>
+    </div>
+    <form action="submit" class="patinet_info">
+      <div>
+        <label for="Brukera">Brukera</label>
+        <input type="text" />
+      </div>
+      <div>
+        <label for="perosnummer">Perosnummer</label>
+        <input type="text" />
+      </div>
+      <div>
+        <label for="Symptom">Symptom</label>
+        <select id="Symptom" name="Symptom">
+          <option>äter inte</option>
+          <option>äter inte</option>
+          <option>äter inte</option>
+          <option>äter inte</option>
+          <option>äter inte</option>
+          <option>äter inte</option>
+          <option>äter inte</option>
+        </select>
+      </div>
+      <div>
+        <label for="Föreslag förebyggande insats"
+          >Föreslag förebyggande insats</label
+        >
+        <select
+          id="Föreslag förebyggande insats"
+          name="Föreslag förebyggande insats"
+        >
+          <option>äter inte</option>
+          <option>äter inte</option>
+          <option>äter inte</option>
+          <option>äter inte</option>
+          <option>äter inte</option>
+          <option>äter inte</option>
+        </select>
+      </div>
+      <div>
+        <label for="Föredragen av brukaren">Föredragen av brukaren</label>
+        <select id="Föredragen av brukaren" name="Föredragen av brukaren">
+          <option>ja</option>
+          <option>nej</option>
+        </select>
+      </div>
+      <div>
+        <label for="Kostnad för förebyggande insats"
+          >Kostnad för förebyggande insats</label
+        >
+        <input type="text" placeholder="1000 Kronor" />
+      </div>
+      <div>
+        <label for="Estimerad kostnad av konsekvens"
+          >Estimerad kostnad av konsekvens</label
+        >
+        <input type="text" placeholder="32750 Kronor" />
+      </div>
+      <div class="btn">
+        <button class="btn1">Begär råd</button>
+        <button class="btn2">Avslå</button>
+        <button class="btn3">Bekräfta</button>
+      </div>
+    </form>
+  </body>
+</html>

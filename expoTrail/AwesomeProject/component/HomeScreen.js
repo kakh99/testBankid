@@ -120,7 +120,7 @@ catch (error) {
         save="value"
     /> 
         </View>
-        <TouchableOpacity style={styles.btn}  onPress={() => navigation.push("Login")}>
+        <TouchableOpacity style={styles.btn}  onPress={() => navigation.push("SecondScreen")}>
         <Text style={styles.btnText}>Shicka In Rapport</Text>
        </TouchableOpacity>
       </View>
@@ -150,14 +150,13 @@ const styles = StyleSheet.create({
     marginTop:10,
     marginLeft:80,
     display: 'flex',
-    justifyContent: 'center',
-    alignContent: 'center',
+   
     fontSize: 24,
     lineHeight: 33,
   },
   inputTexts:{
      flexDirection: 'row',
-     justifyContent:'start', 
+     
      padding:10,  
      borderWidth: 1,
      borderColor: 'gray',
@@ -170,8 +169,7 @@ const styles = StyleSheet.create({
     marginTop:100,
     marginLeft:100,
     display: 'flex',
-    justifyContent: 'center',
-    alignContent: 'center',
+  
     fontSize: 24,
     lineHeight: 33,
     color:'blue'
@@ -180,8 +178,7 @@ const styles = StyleSheet.create({
     marginLeft:60,
     marginRight:30,
     display: 'flex',
-    justifyContent: 'center',
-    alignContent: 'center',
+   
     fontSize: 24,
     lineHeight: 33,
     color:'black'
@@ -191,8 +188,7 @@ const styles = StyleSheet.create({
   marginLeft:60,
   marginRight:50,
   display: 'flex',
-  justifyContent: 'center',
-  alignContent: 'center',
+  
   fontSize: 24,
   lineHeight: 33,
   color:'black',
@@ -203,9 +199,9 @@ btn:{
     marginLeft:30,
     width:300,
     display:'flex',
-    alignContent:'center',
+   
     backgroundColor:'#F3651B',
-    justifyContent:'center',
+    
     alignItems:'center',
     borderRadius:10
 

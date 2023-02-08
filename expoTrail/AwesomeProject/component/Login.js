@@ -81,8 +81,7 @@ const styles = StyleSheet.create({
 btnText:{
   display:'flex',
   color:'white',
-  justifyContent:'center',
-  alignContent:'cetnter',
+
   padding:15,
   fontSize:20,
   textTransform:'uppercase',

@@ -15,6 +15,8 @@ const app = express();
 
 const config = {
   mobileBankIdPolicy: "1.2.3.4.25",
+  //mobileBankIdPolicy:"1.2.752.78.1.5", this is for production env
+
   bankdIdUrl: "https://appapi2.test.bankid.com/rp/v5.1",
   pfx: fs.readFileSync("./certificate/FPTestcert4_20220818.p12"),
   passphrase: "qwerty123",
@@ -35,9 +37,8 @@ const axios = axiosLib.create({
 });
 
 async function call(method, params) {
-  console.log(":");
-  console.log(params);
- console.log(`${config.bankdIdUrl}/${method}`) ;
+ // console.log("params:");console.log(params);
+ //console.log(`${config.bankdIdUrl}/${method}`) ;
   const [error, result] = await to(
     axios.post(`${config.bankdIdUrl}/${method}`, params)
   );
@@ -45,27 +46,37 @@ async function call(method, params) {
 
   if (error) {
     console.log(error.stack);
-    // You will want to implement your own error handling here
+    const timeoutErrorCodes = ['requestTimeout', 'maintenance (repeatedly)','internalError'];
+
     console.error("Error in call");
     if (error.response && error.response.data) {
       console.error(error.response.data);
       if (error.response.data.errorCode === "alreadyInProgress") {
         console.error(
-          "You would have had to call cancel on this orderRef before retrying"
+          "An identification or signing for this personal number is already started. Please try again."
         );
+      }else if (error.response.data.errorCode === "cancelled") {
         console.error(
-          "The order should now have been automatically cancelled by this premature retry"
+          "Action cancelled. Please try again. "
         );
-      }
+        
+      }else if (timeoutErrorCodes.includes(error.response.data.errorCode) ){
+        // handle request timeout or maintenance error
+        console.error(
+          "Internal error. Please try again"
+        );
+      } 
     }
     return { error };
   }
+
+  console.log("result.data:");
   console.log(result.data);
+  console.log("end of result.data:");
   // axiosLib(`https://app.bankid.com/?autostarttoken=[${result.data.autoStartToken}]&redirect=null`,param);
 
   return result.data;
 }
-
 const auth = async (endUserIp) =>
   await call("auth", {
     endUserIp,
@@ -75,9 +86,12 @@ const auth = async (endUserIp) =>
     },
   });
 const collect = async (orderRef) => await call("collect", { orderRef });
+// BankID method call cancel
+const cancel = async (orderRef) => await call('cancel', {orderRef});
 
 const startPolling = async (orderRef) => {
   try {
+    console.log("startPolling");
     while (true) {
       const { status, hintCode, completionData } = await collect(orderRef);
       if (status === "failed") {
@@ -85,34 +99,79 @@ const startPolling = async (orderRef) => {
       } else if (status === "complete") {
         return { ok: true, status: completionData };
       } else {
-        console.log(hintCode);
+        console.log(`hincode is :${hintCode}`);
       }
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
   } catch (err) {
     return err;
   }
 };
-
-
-app.get("/api/login", function (req, res, next) {
-  console.log(req.socket.remoteAddress);
-  auth('91.128.217.193')
-    .then((response) => {
-      const { orderRef, autoStartToken } = response;
-      const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
-      console.log("redirectUrl:");
-      console.log(redirectUrl);
-      res.redirect(redirectUrl);
-      startPolling(orderRef);
-    })
-    .catch((err) => next(err));
+//async redirectUrl() =
+app.get("/api/login", async (req, res, next) => {
+  //console.log(req.socket.remoteAddress);
+  try {
+   console.log("start Auth");
+    const response = await auth('91.128.217.193');
+    const { orderRef, autoStartToken } = response;
+   
+   //if the user initiates another request and the first one is still going, the auth should return an error
+   //here we are checking that if the autostartoken or orderref are undefined (the response from the auth method) but we should maybe change this method to check if there is error
+    if (!autoStartToken || !orderRef) {
+      //if(error.response.data.errorCode === "cancelled")
+      console.log("orderRef or autostartToken is undefined");
+    throw new Error('Request failed');
+  }
+    const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
+    console.log("redirectUrl:");
+    console.log(redirectUrl);
+    res.redirect(redirectUrl);
+    const [error, result] = await to(startPolling(orderRef));
+    console.log(`polling result is ${result}`);
+   /* const {ok, status} = await startPolling(orderRef);
+     if (status === "userCancel") {
+       const { status, hintCode, completionData } = await call('cancel', { orderRef });
+        return { ok: true, status: hintCode };
+      }*/
+   /* const pollingResult  = await startPolling(orderRef);
+    console.log(`pollingResults:${pollingResult}`);
+    if (pollingResult.hintCode="userCancel") {
+      console.log("cancelling")
+      await cancel(orderRef);
+    }else{
+      console.log("not cancelled")
+    }*/
+  } catch (err) {
+    console.log("caught in app.get");
+   // console.log(err);
+    next(err);
+  }
 });
 
 //ROUTES
-
+/*
+async function startAuthandPolling(pnr){
+  try {
+    const response = await auth('91.128.217.193',pnr);
+    const { orderRef, autoStartToken } = response;
+    const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
+    console.log("redirectUrl:");
+    console.log(redirectUrl);
+    //res.redirect(redirectUrl);
+    //await cancel(orderRef);
+    const pollingResult  = await startPolling(orderRef);
+    console.log(`pollingResults:${pollingResult}`);
+    
+   /* if (pollingResult.hintCode="userCancel") {
+      await cancel(orderRef);
+    }
+  } catch (err) {
+    next(err);
+  }
+}*/
 // /*eslint-disable-next-line no-unused-lets*/
 app.use((err, _req, res, next) => {
+  console.log("in error middleware");
   console.error(err.stack);
   const errRes = {
     message: err.message,
@@ -123,6 +182,7 @@ app.use((err, _req, res, next) => {
   }
   res.status(err.status || 500);
   res.json(errRes);
+  console.log("end of error middleware");
 });
 
 const mongoURI = process.env.MONGO_URI.replace(
@@ -145,6 +205,3 @@ app.listen(port, (err) => {
   console.log(`Backend: ${port}/api/`);
   console.log(`Frontend (production):${port}/`);
 });
-
-
-//ipAddress: '91.128.217.193'
