@@ -80,7 +80,8 @@ async function call(method, params) {
 const auth = async (endUserIp) =>
   await call("auth", {
     endUserIp,
-    personalNumber:"193305074795",
+    //personalNumber:"193305074795",
+   // personalNumber:"199607050375",
     requirement: {
       allowFingerprint: true,
     },
@@ -110,9 +111,15 @@ const startPolling = async (orderRef) => {
 //async redirectUrl() =
 app.get("/api/login", async (req, res, next) => {
   //console.log(req.socket.remoteAddress);
+  let endUserIp = req.ip;
+  if (endUserIp.startsWith('::ffff:')) {
+    endUserIp = endUserIp.slice(7);
+  }
+  console.log(endUserIp);
+  console.log(typeof endUserIp);
   try {
    console.log("start Auth");
-    const response = await auth('91.128.217.193');
+    const response = await auth(endUserIp);
     const { orderRef, autoStartToken } = response;
    
    //if the user initiates another request and the first one is still going, the auth should return an error
@@ -122,25 +129,14 @@ app.get("/api/login", async (req, res, next) => {
       console.log("orderRef or autostartToken is undefined");
     throw new Error('Request failed');
   }
-    const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
+  
+   //const redirectUrl = `bankid:///?autostarttoken=[${autoStartToken}]&redirect=null`;
+    const redirectUrl = `https://app.bankid.com/?autostarttoken=${autoStartToken}&redirect=null`;
     console.log("redirectUrl:");
     console.log(redirectUrl);
-    res.redirect(redirectUrl);
+    res.send(redirectUrl);
     const [error, result] = await to(startPolling(orderRef));
     console.log(`polling result is ${result}`);
-   /* const {ok, status} = await startPolling(orderRef);
-     if (status === "userCancel") {
-       const { status, hintCode, completionData } = await call('cancel', { orderRef });
-        return { ok: true, status: hintCode };
-      }*/
-   /* const pollingResult  = await startPolling(orderRef);
-    console.log(`pollingResults:${pollingResult}`);
-    if (pollingResult.hintCode="userCancel") {
-      console.log("cancelling")
-      await cancel(orderRef);
-    }else{
-      console.log("not cancelled")
-    }*/
   } catch (err) {
     console.log("caught in app.get");
    // console.log(err);
@@ -195,7 +191,7 @@ mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true }, 
       console.error(err.stack);
       process.exit(1);
   }
-  console.log(`Connected to MongoDB with URI: ${mongoURI}`);
+  console.log(`Connected to MongoDB with URI: `);
 });
 
 const port = process.env.PORT || 8000; //add port to the env file for the server

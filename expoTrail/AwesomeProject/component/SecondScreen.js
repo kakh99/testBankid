@@ -71,10 +71,11 @@ const fetchApi = async ()=>{
     console.log('hello1')
     //http://172.18.2.231:8000/api/login'
     //https://bankidtest1.onrender.com/api/login
-    const res = await axios.get('https://bankidtest1.onrender.com/api/login')
+    const res = await axios.get('http://192.168.0.11:8000/api/login')
     console.log('hello2')
     console.log(res.data)
-    Linking.openURL('https://app.bankid.com/?autostarttoken=&redirect=null');
+    Linking.openURL(res.data);
+    //Linking.openURL('https://app.bankid.com/?autostarttoken=&redirect=null');
   } catch (error) {
        console.log(error.message)
   }
