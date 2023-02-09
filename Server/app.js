@@ -70,9 +70,9 @@ async function call(method, params) {
     return { error };
   }
 
-  console.log("result.data:");
+ /* console.log("result.data:");
   console.log(result.data);
-  console.log("end of result.data:");
+  console.log("end of result.data:");*/
   // axiosLib(`https://app.bankid.com/?autostarttoken=[${result.data.autoStartToken}]&redirect=null`,param);
 
   return result.data;
@@ -96,8 +96,11 @@ const startPolling = async (orderRef) => {
     while (true) {
       const { status, hintCode, completionData } = await collect(orderRef);
       if (status === "failed") {
+       
         return { ok: false, status: hintCode };
       } else if (status === "complete") {
+        console.log("returning form startpolling");
+       console.log( { ok: true, status: completionData });
         return { ok: true, status: completionData };
       } else {
         console.log(`hincode is :${hintCode}`);
@@ -111,6 +114,8 @@ const startPolling = async (orderRef) => {
 //async redirectUrl() =
 app.get("/api/login", async (req, res, next) => {
   //console.log(req.socket.remoteAddress);
+
+
   let endUserIp = req.ip;
   if (endUserIp.startsWith('::ffff:')) {
     endUserIp = endUserIp.slice(7);
@@ -134,9 +139,41 @@ app.get("/api/login", async (req, res, next) => {
     const redirectUrl = `https://app.bankid.com/?autostarttoken=${autoStartToken}&redirect=null`;
     console.log("redirectUrl:");
     console.log(redirectUrl);
-    res.send(redirectUrl);
-    const [error, result] = await to(startPolling(orderRef));
-    console.log(`polling result is ${result}`);
+    const responseWithUrl = {
+      order : orderRef,
+      url:redirectUrl
+    }
+    res.send(responseWithUrl);
+   // const [error, result] = await to(startPolling(orderRef));
+    
+ 
+ //   console.log(`polling result is ${result}`);
+  } catch (err) {
+    console.log("caught in app.get");
+   // console.log(err);
+    next(err);
+  }
+});
+
+app.get("/api/polling", async (req, res, next) => {
+ 
+  try {
+   console.log("start polling");
+   console.log(`headers: ${req.headers['order-ref']}`);
+   const orderRef =req.headers['order-ref'];
+    const response = await startPolling(orderRef);
+    const { ok, status } = response;
+  
+    console.log(`response from polling ${ok}`);
+   //if the user initiates another request and the first one is still going, the auth should return an error
+   //here we are checking that if the autostartoken or orderref are undefined (the response from the auth method) but we should maybe change this method to check if there is error
+   /* if (!autoStartToken || !orderRef) {
+      //if(error.response.data.errorCode === "cancelled")
+      console.log("orderRef or autostartToken is undefined");
+    throw new Error('Request failed');
+  }*/
+    res.send(ok);
+   // console.log(`polling result is ${result}`);
   } catch (err) {
     console.log("caught in app.get");
    // console.log(err);

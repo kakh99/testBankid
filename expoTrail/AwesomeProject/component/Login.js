@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { View, Text, Image, TextInput, ImageBackground,TouchableOpacity} from 'react-native';
 import { StyleSheet} from 'react-native';
-
-
+import axios from 'axios';
+import { Linking } from 'react-native';
+import React, {useEffect, useState} from 'react'
 export default function SecondScreen({ navigation }) {
     /*const postExample = async () => {
     try {
@@ -21,6 +22,41 @@ export default function SecondScreen({ navigation }) {
         console.error(error);
     }
 }*/
+const fetchApi = async ()=>{
+  try {
+    console.log('hello1')
+    //http://172.18.2.231:8000/api/login'
+    //https://bankidtest1.onrender.com/api/login
+    const res = await axios.get('http://172.18.3.20:8000/api/login')
+    console.log('hello2')
+    console.log(res.data)
+    let order = res.data.order;
+    console.log('orderRef: ' + order);
+    Linking.openURL(res.data.url);
+    console.log("redirected")
+    console.log('orderRef: ' + order);
+    const res2 =await axios.get('http://172.18.3.20:8000/api/polling', {
+      headers: {
+        'order-ref': order
+      }
+    }) ;
+    console.log("res2:");
+    console.log(res2.data);
+    //Linking.openURL('https://app.bankid.com/?autostarttoken=&redirect=null');
+    if(res2.data== true){
+      console.log(res2.data);
+      navigation.push("Home")
+    }
+    
+  } catch (error) {
+       console.log(error.message)
+  }
+    
+}
+/* useEffect(()=>{
+   fetchApi();
+ },[])*/
+  
   
   const localBackgroundImage = require('../assets//Background_app_login[654].png')
   
@@ -33,7 +69,7 @@ export default function SecondScreen({ navigation }) {
     </View>
       
       <TouchableOpacity style={styles.btn} title='Go to Home Screen'
-        onPress={() => navigation.push("Home")}>
+        onPress={fetchApi}>
         <Text style={styles.btnText}>Logga In</Text>
        </TouchableOpacity>
       
