@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { View, Text, Image, TextInput, ImageBackground,TouchableOpacity} from 'react-native';
 import { StyleSheet} from 'react-native';
-
+import {useEffect, useState} from 'react'
+import axios from 'axios'
 
 export default function SecondScreen({ navigation }) {
     /*const postExample = async () => {
@@ -23,6 +24,26 @@ export default function SecondScreen({ navigation }) {
 }*/
   
   const localBackgroundImage = require('../assets//Background_app_login[654].png')
+  const [backendData1, setBackendData1] = useState([])
+const fetchApi = async ()=>{
+  try {
+    console.log('hello1')
+    //http://172.18.2.231:8000/api/login'
+    //https://bankidtest1.onrender.com/api/login
+    //http://192.168.0.6:8000/api/login
+    const res = await axios.get('http://192.168.0.6:8000/api/login')
+    console.log('hello2')
+    console.log(res.data)
+    Linking.openURL('https://app.bankid.com/?autostarttoken=&redirect=null');
+    navigation.push("Home")
+  } catch (error) {
+       console.log(error.message)
+  }
+    
+}
+ useEffect(()=>{
+   fetchApi();
+ },[])
   
   return (
     < ImageBackground source={localBackgroundImage}  style={styles.coverimage}>
@@ -33,7 +54,7 @@ export default function SecondScreen({ navigation }) {
     </View>
       
       <TouchableOpacity style={styles.btn} title='Go to Home Screen'
-        onPress={() => navigation.push("Home")}>
+        onPress={fetchApi}>
         <Text style={styles.btnText}>Logga In</Text>
        </TouchableOpacity>
       
@@ -81,8 +102,7 @@ const styles = StyleSheet.create({
 btnText:{
   display:'flex',
   color:'white',
-  justifyContent:'center',
-  alignContent:'cetnter',
+
   padding:15,
   fontSize:20,
   textTransform:'uppercase',
