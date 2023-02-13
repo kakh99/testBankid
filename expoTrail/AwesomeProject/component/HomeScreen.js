@@ -1,19 +1,21 @@
 import React from 'react';
 import { SelectList } from 'react-native-dropdown-select-list'
-import { View, Text, Image, TextInput, ImageBackground,   ScrollView,TouchableOpacity} from 'react-native';
+import { View, Text, Image, TextInput, ImageBackground,   ScrollView,TouchableOpacity, Alert} from 'react-native';
 import { StyleSheet} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Login from './Login';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import axios from 'axios';
 
 
 const Stack = createNativeStackNavigator();
 
-const HelloWorldApp = ({navigation}) => {
+const HelloWorldApp = ({navigation, route}) => {
+
   const localBackgroundImage = require('../assets//Background_app_login[654].png')
   const [selected, setSelected] = React.useState("");
   const [selected2, setSelected2] = React.useState("");
-  const [selected3, setSelected3] = React.useState("");
+  const [selected3, setSelected3] = React.useState(false);
  
   const data = [
       {key:'1', value:'Äter inte'},
@@ -38,29 +40,64 @@ const data3 = [
   {key:'2', value:'Nej'},
   
 ]
+/*
+if (data.value==='Ja') {
+  setSelected3(true);
+}else{
+  setSelected3(false);
+}*/
+//, authorization: `Bearer ${loginData.jwtToken}`
+const loginData = JSON.parse(route.params.dataString);
 const requestOptions = {
   method: 'POST',
+  headers: { 'Content-Type': 'application/json' , 'Authorization': `Bearer ${loginData.jwtToken}`},
+  body: JSON.stringify({ symptom:selected, measures:selected2, elderly_agreement:selected3})
+};
+
+const handleSubmit = async () => {
+  try {
+    const response = await fetch(
+      'http://172.18.3.20:8000/api/reports', requestOptions
+    );
+    console.log("requestOptions:"+requestOptions);
+    const data = await response.json();
+    Alert.alert("Post created at : ", data.createdAt);
+    navigation.push("SecondScreen");
+  } catch (error) {
+    console.error(error);
+  }
+};
+//const[]
+/*const requestOptions = {
+  method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ postName: 'React updates ' })
+ // body: JSON.stringify({selected,selected2,selected3})
+ body: JSON.stringify({name:"karam"})
 };
 
 const handleSubmit = async () => {
   try {
     await fetch(
-        'https://reqres.in/api/posts', requestOptions)
+      'http://172.18.3.20:8000/api/reports', requestOptions)
         .then(response => {
             response.json()
                 .then(data => {
                     Alert.alert("Post created at : ", 
                     data.createdAt);
-                    navigation.push("Login");
+                    navigation.push("Second");
                 });
         })
 }
 catch (error) {
     console.error(error);
 }
-};
+};*/
+/*const {data} =await axios.get('http://172.18.3.20:8000/api/auth/poll', {
+      headers: {
+       // authorization: `Bearer ${res.data.jwtToken}`,
+        'order-ref': order
+      }
+    }) ;*/
 /*const handleSubmit1 = function(){
   navigation.push("Second");
   console.log(selected)
@@ -73,6 +110,12 @@ catch (error) {
   navigation.navigate('SentReport')
   Alert.alert('you pressed me')
 }*/
+
+//const jwtToken = navigation.getParam('a');
+
+
+
+
   return (
     <ImageBackground source={localBackgroundImage}  style={styles.coverimage}>
       <ScrollView style={styles.scrollView}>
@@ -86,12 +129,12 @@ catch (error) {
           <View style={{ flexDirection: 'row' }}>
           <View style={styles.inputTexts}>
       <Icon name="search" size={24} style={{ marginRight: 10 }} />
-      <TextInput placeholder='Brukera Namn'></TextInput>
+      <TextInput placeholder='Brukera Namn'>{loginData.elderlyInfo.name}</TextInput>
     </View>
           </View>
           <View style={styles.inputTexts}>
       <Icon name="search" size={24} style={{ marginRight: 10 }} />
-      <TextInput placeholder='personnummer'></TextInput>
+      <TextInput >{loginData.elderlyInfo.personalNumber}</TextInput>
     </View>
     <View  style={styles.options}>
               
@@ -115,12 +158,19 @@ catch (error) {
               
               <SelectList 
         placeholder='Föredragen av brukaren'
-        setSelected={(val) => setSelected3(val)} 
+        setSelected={(val) =>{
+          if (val==='Ja') {
+            setSelected3(true)
+          }else{
+            setSelected3(false)
+          }
+          
+        } } 
         data={data3} 
         save="value"
     /> 
         </View>
-        <TouchableOpacity style={styles.btn}  onPress={() => navigation.push("SecondScreen")}>
+        <TouchableOpacity style={styles.btn}  onPress={handleSubmit}>
         <Text style={styles.btnText}>Shicka In Rapport</Text>
        </TouchableOpacity>
       </View>

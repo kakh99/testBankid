@@ -93,7 +93,7 @@ const fetchApi = async ()=>{
       </View>
       
       <TouchableOpacity style={styles.btn} title='Go to Home Screen'
-        onPress= {fetchApi}>
+        onPress= {()=> navigation.push("Home")}>
         <Text style={styles.btnText}>Skapa In Ny Rapport</Text>
        </TouchableOpacity>
       
@@ -105,17 +105,7 @@ const fetchApi = async ()=>{
     <View>
     </View>
     </View>
-    <View>
-    {loading ? (<Text>loading...</Text>):(
-      backendData.map((data)=>(
-        <View>
-          <Text>{data.login}</Text>
-          
-        </View>
-      ))
-      
-    )}
-    </View>
+    
     
     </ ImageBackground>
   );

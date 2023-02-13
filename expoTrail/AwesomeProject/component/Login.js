@@ -4,7 +4,7 @@ import { StyleSheet} from 'react-native';
 import axios from 'axios';
 import { Linking } from 'react-native';
 import React, {useEffect, useState} from 'react'
-export default function SecondScreen({ navigation }) {
+export default function SecondScreen({navigation}) {
     /*const postExample = async () => {
     try {
         await fetch(
@@ -27,25 +27,30 @@ const fetchApi = async ()=>{
     console.log('hello1')
     //http://172.18.2.231:8000/api/login'
     //https://bankidtest1.onrender.com/api/login
-    const res = await axios.get('http://172.18.3.20:8000/api/login')
+    const res = await axios.get('http://172.18.3.20:8000/api/auth/login')
     console.log('hello2')
     console.log(res.data)
     let order = res.data.order;
     console.log('orderRef: ' + order);
-    Linking.openURL(res.data.url);
+    Linking.openURL(res.data.appUrl);
     console.log("redirected")
     console.log('orderRef: ' + order);
-    const res2 =await axios.get('http://172.18.3.20:8000/api/polling', {
+    const {data} =await axios.get('http://172.18.3.20:8000/api/auth/poll', {
       headers: {
+       // authorization: `Bearer ${res.data.jwtToken}`,
         'order-ref': order
       }
     }) ;
+  
     console.log("res2:");
-    console.log(res2.data);
+    console.log(data);
+    console.log(data.elderlyInfo);
+
     //Linking.openURL('https://app.bankid.com/?autostarttoken=&redirect=null');
-    if(res2.data== true){
-      console.log(res2.data);
-      navigation.push("Home")
+    if(data.status == true){
+      const dataString = JSON.stringify(data)
+      navigation.navigate('Home', {dataString});
+    //  navigation.push("Home")
     }
     
   } catch (error) {
